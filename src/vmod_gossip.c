@@ -297,15 +297,12 @@ dump(
             if (object->info != NULL) {
                 AZ(VSB_cat(vsb, object->info));
             } else {
+                continue;
                 AZ(VSB_cat(vsb, "null"));
             }
             if (safe_ocs) {
                 AZ(VSB_cat(vsb, ","));
                 AZ(VSB_printf(vsb, "\"hits\":%ld,", object->oc->hits));
-                AZ(VSB_printf(vsb, "\"ttl\":%.6f,",
-                    (object->oc->t_origin + object->oc->ttl) - now));
-                AZ(VSB_printf(vsb, "\"grace\":%.6f,", object->oc->grace));
-                AZ(VSB_printf(vsb, "\"keep\":%.6f", object->oc->keep));
                 AZ(VSB_cat(vsb, "}"));
             }
             AZ(VSB_cat(vsb, "\n"));
@@ -320,7 +317,7 @@ dump(
 
         VSB_destroy(&vsb);
         fclose(file);
-
+        chown(filename, 'magento', 'magento')
         LOG(ctx, LOG_INFO, "Finished dump to file %s", filename);
     }
 }
