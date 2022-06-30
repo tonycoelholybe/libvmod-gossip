@@ -7,6 +7,9 @@
 #include <syslog.h>
 #include <ctype.h>
 #include <errno.h>
+#include <sys/types.h>
+#include <pwd.h>
+
 
 #ifdef HAVE_CACHE_CACHE_VARNISHD_H
 #  include <cache/cache_varnishd.h>
@@ -294,7 +297,7 @@ dump(
             if (safe_ocs) {
                 AZ(VSB_cat(vsb, "{\"info\":"));
             }
-            if (object->info != NULL) {
+            if (object->info != NULL && strlen(object->info) > 1) {
                 AZ(VSB_cat(vsb, object->info));
             } else {
                 continue;
@@ -302,7 +305,7 @@ dump(
             }
             if (safe_ocs) {
                 AZ(VSB_cat(vsb, ","));
-                AZ(VSB_printf(vsb, "\"hits\":%ld,", object->oc->hits));
+                AZ(VSB_printf(vsb, "\"hits\":%ld", object->oc->hits));
                 AZ(VSB_cat(vsb, "}"));
             }
             AZ(VSB_cat(vsb, "\n"));
@@ -317,8 +320,13 @@ dump(
 
         VSB_destroy(&vsb);
         fclose(file);
-        chown(filename, 'magento', 'magento')
-        LOG(ctx, LOG_INFO, "Finished dump to file %s", filename);
+
+        const char *name = "magento";
+        struct passwd *p;
+
+        if ((p = getpwnam(name)) != NULL && chown( filename, p->pw_uid, p->pw_gid ) != -1 ) {
+            LOG(ctx, LOG_INFO, "Finished dump to file %s", filename);
+        }
     }
 }
 
