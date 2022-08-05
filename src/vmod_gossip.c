@@ -294,15 +294,13 @@ dump(
                 }
             }
 
-            if (safe_ocs) {
+            if (safe_ocs && object->info != NULL && strlen(object->info) > 1) {
                 AZ(VSB_cat(vsb, "{\"info\":"));
-            }
-            if (object->info != NULL && strlen(object->info) > 1) {
                 AZ(VSB_cat(vsb, object->info));
             } else {
                 continue;
-                AZ(VSB_cat(vsb, "null"));
             }
+
             if (safe_ocs) {
                 AZ(VSB_cat(vsb, ","));
                 AZ(VSB_printf(vsb, "\"hits\":%ld", object->oc->hits));
