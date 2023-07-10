@@ -6,7 +6,7 @@ on:
 
 jobs:
   test:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
 
     strategy:
       matrix:
@@ -24,14 +24,14 @@ jobs:
             configure_flags: --enable-code-coverage
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       - name: Install packages
         run: |
           sudo apt-get update -q
           sudo apt-get install -qq \
-            automake autotools-dev lcov libedit-dev libeditline-dev \
-            libncurses-dev libpcre2-dev libtool python-docutils python3-sphinx
+            automake autotools-dev lcov libedit-dev \
+            libncurses-dev libpcre2-dev libtool python3-docutils python3-sphinx
 
       - name: Install Varnish Cache
         run: |
